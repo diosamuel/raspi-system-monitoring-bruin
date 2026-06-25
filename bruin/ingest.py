@@ -1,3 +1,4 @@
+import json
 import os
 import socket
 import subprocess
@@ -73,5 +74,18 @@ def ingest():
     uptime = getUptime()
     rx, tx = getNetStats()
 
-    print(cpu_usage,mem_usage,disk_usage,cpu_temp, cpu_volt, throttled, uptime, rx,tx)
+    return json.dumps({
+        "timestamp": now,
+        "hostname": host,
+        "cpu_usage_pct": cpu_usage,
+        "memory_usage_pct": mem_usage,
+        "disk_usage_pct": disk_usage,
+        "cpu_temp_c": cpu_temp,
+        "cpu_volt_v": cpu_volt,
+        "throttled": throttled,
+        "uptime_seconds": uptime,
+        "net_iface": "wlan0",
+        "rx_bps": rx,
+        "tx_bps": tx
+    })
 ingest()
