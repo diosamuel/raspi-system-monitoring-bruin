@@ -4,6 +4,7 @@ import socket
 import subprocess
 from datetime import datetime, timezone
 
+# Ingest the system
 def getCpuUsage():
     with open("/proc/stat") as f:
         parts = f.readline().split()
