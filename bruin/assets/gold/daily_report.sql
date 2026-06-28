@@ -54,19 +54,22 @@ columns:
 @bruin*/
 
 SELECT
-    time_bucket(INTERVAL '1 day', timestamp) AS bucket,
+    time_bucket(INTERVAL '1 day', timestamp) AS ts,
     ROUND(AVG(cpu_temp_c), 2) AS avg_cpu_temp,
     ROUND(MAX(cpu_temp_c), 2) AS max_cpu_temp,
     ROUND(AVG(memory_usage_pct), 2) AS avg_mem_usage,
     ROUND(MIN(memory_usage_pct), 2) AS min_mem_usage,
     ROUND(MAX(memory_usage_pct), 2) AS max_mem_usage,
     ROUND(AVG(disk_usage_pct), 2) AS avg_disk,
+    ROUND(MAX(disk_usage_pct), 2) AS max_disk,
     ROUND(AVG(cpu_usage_pct), 2) AS avg_cpu_usage,
+    ROUND(AVG(cpu_usage_pct), 2) AS max_cpu_usage,
     ROUND(AVG(cpu_volt_v), 2) AS avg_cpu_volt,
+    ROUND(AVG(cpu_volt_v), 2) AS max_cpu_volt,
     CAST(MAX(uptime_seconds) AS INTEGER) AS uptime,
-    MAX(rx_bps) AS rx,
-    MAX(tx_bps) AS tx
+    MAX(rx_bps) AS rtx_byte,
+    MAX(tx_bps) AS tx_byte,
+    NOW() as ingested_at
 FROM remote_db.raw_data
 GROUP BY bucket
 ORDER BY bucket ASC
-
