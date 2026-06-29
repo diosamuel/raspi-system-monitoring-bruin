@@ -1,6 +1,7 @@
 .bruin.yml
 .env
 secrets/
+pipeline/pipeline.yml
 logs/runs
 logs/*.log
 __pycache__/

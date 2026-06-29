@@ -50,6 +50,8 @@ import bruin
 import duckdb
 import os
 import pandas as pd
+from dotenv import load_dotenv
+load_dotenv()  # loads .env from WorkingDirectory
 
 
 def materialize() -> pd.DataFrame:
