@@ -65,7 +65,7 @@ def getNetStats():
 
 def ingest():
     gmt7 = timezone(timedelta(hours=7))
-    now = datetime.now(gmt7).strftime("%Y-%m-%dT%H:%M:%SZ+07:00")
+    now = datetime.now(gmt7).strftime("%Y-%m-%dT%H:%M:%S+07:00")
     host = socket.gethostname()
     cpu_usage = getCpuUsage()
     mem_usage = getMemoryUsage()
