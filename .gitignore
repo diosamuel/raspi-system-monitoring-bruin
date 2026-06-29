@@ -2,6 +2,7 @@
 .env
 secrets/
 pipeline/pipeline.yml
+pipeline/assets/gold/*.sql
 logs/runs
 logs/*.log
 __pycache__/

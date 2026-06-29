@@ -3,6 +3,10 @@ name: report.hourly_report
 type: python
 connection: gcp-bigdata
 
+secrets:
+  - key: PI_TAILSCALE_HOST
+  - key: PI_TAILSCALE_TOKEN
+
 materialization:
   type: table
   strategy: create+replace
@@ -46,16 +50,16 @@ columns:
     description: 'Ingestion timestamp'
 @bruin"""
 
+import bruin
 import duckdb
-import os
 import pandas as pd
 from dotenv import load_dotenv
 load_dotenv()  # loads .env from WorkingDirectory
 
 
 def materialize() -> pd.DataFrame:
-    host = os.getenv("PI_TAILSCALE_HOST")
-    token = os.getenv("PI_TAILSCALE_TOKEN")
+    host = bruin.get_connection("PI_TAILSCALE_HOST").raw
+    token = bruin.get_connection("PI_TAILSCALE_TOKEN").raw
 
     duck_conn = duckdb.connect(":memory:")
 
@@ -70,7 +74,7 @@ def materialize() -> pd.DataFrame:
 
     df = duck_conn.execute("""
         SELECT
-            time_bucket(INTERVAL '1 hour', timestamp) AS ts,
+            time_bucket(INTERVAL '1 hour', CAST(REPLACE(timestamp, 'Z', '') AS TIMESTAMP)) AS ts,
             ROUND(AVG(cpu_temp_c), 2) AS avg_cpu_temp,
             ROUND(MAX(cpu_temp_c), 2) AS max_cpu_temp,
             ROUND(AVG(memory_usage_pct), 2) AS avg_mem_usage,
