@@ -66,7 +66,7 @@ def materialize() -> pd.DataFrame:
     duck_conn.execute("INSTALL quack;")
     duck_conn.execute("LOAD quack;")
     duck_conn.execute(f"""
-        ATTACH 'quack:{host}' AS remote_db (
+        ATTACH 'quack:https://pi.taila7b28e.ts.net' AS remote_db (
             DISABLE_SSL true,
             TOKEN '{token}'
         );
