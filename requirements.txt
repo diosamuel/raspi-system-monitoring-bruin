@@ -1,3 +1,4 @@
 bruin-sdk[duckdb]
 pandas
 bruin-sdk
+bruin-sdk[bigquery]

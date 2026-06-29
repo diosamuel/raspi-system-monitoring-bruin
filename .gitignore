@@ -1,4 +1,6 @@
 .bruin.yml
+.env
+secrets/
 logs/runs
 logs/*.log
 __pycache__/

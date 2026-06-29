@@ -2,7 +2,7 @@ import json
 import os
 import time
 
-from bruin.ingest import ingest
+from pipeline.ingest import ingest
 
 JSONL_PATH = os.path.join(os.path.dirname(__file__), "metrics.jsonl")
 

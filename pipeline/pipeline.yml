@@ -1,0 +1,10 @@
+name: duckdb-example-pipeline
+catchup: false
+
+variables:
+  host:
+    type: string
+    default: 'pi.taila7b28e.ts.net'
+  token:
+    type: string
+    default: 'token'

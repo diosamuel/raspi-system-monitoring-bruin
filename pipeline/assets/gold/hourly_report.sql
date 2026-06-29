@@ -1,5 +1,5 @@
 /*@bruin
-name: gold.daily_report
+name: gold.hourly_report
 connection: duckdb-inmemory
 type: duckdb.sql
 
@@ -33,6 +33,9 @@ columns:
   - name: min_mem_usage
     type: FLOAT
     description: 'Min memory usage percentage'
+  - name: max_mem_usage
+    type: FLOAT
+    description: 'Max memory usage percentage'
   - name: avg_disk
     type: FLOAT
     description: 'Average disk usage percentage'
@@ -54,7 +57,7 @@ columns:
 @bruin*/
 
 SELECT
-    time_bucket(INTERVAL '1 day', timestamp) AS ts,
+    time_bucket(INTERVAL '1 hour', timestamp) AS ts,
     ROUND(AVG(cpu_temp_c), 2) AS avg_cpu_temp,
     ROUND(MAX(cpu_temp_c), 2) AS max_cpu_temp,
     ROUND(AVG(memory_usage_pct), 2) AS avg_mem_usage,
@@ -71,5 +74,5 @@ SELECT
     MAX(tx_bps) AS tx_byte,
     NOW() as ingested_at
 FROM remote_db.raw_data
-GROUP BY bucket
-ORDER BY bucket ASC
+GROUP BY ts
+ORDER BY ts ASC
