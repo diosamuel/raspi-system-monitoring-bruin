@@ -2,7 +2,7 @@ import json
 import os
 import socket
 import subprocess
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 # Ingest the system
 def getCpuUsage():
@@ -64,7 +64,8 @@ def getNetStats():
 
 
 def ingest():
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    gmt7 = timezone(timedelta(hours=7))
+    now = datetime.now(gmt7).strftime("%Y-%m-%dT%H:%M:%SZ+07:00")
     host = socket.gethostname()
     cpu_usage = getCpuUsage()
     mem_usage = getMemoryUsage()
