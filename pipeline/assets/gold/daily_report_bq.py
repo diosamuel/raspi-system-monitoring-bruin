@@ -1,7 +1,7 @@
 """@bruin
 name: report.daily_report
 type: python
-connection: gcp-bigdata
+connection: duckdb-inmemory
 
 secrets:
   - key: PI_TAILSCALE_HOST
@@ -16,34 +16,34 @@ columns:
     type: TIMESTAMP
     description: 'Daily time ts'
   - name: avg_cpu_temp
-    type: FLOAT64
+    type: DOUBLE
     description: 'Average CPU temperature'
   - name: max_cpu_temp
-    type: FLOAT64
+    type: DOUBLE
     description: 'Max CPU temperature'
   - name: avg_mem_usage
-    type: FLOAT64
+    type: DOUBLE
     description: 'Average memory usage percentage'
   - name: min_mem_usage
-    type: FLOAT64
+    type: DOUBLE
     description: 'Min memory usage percentage'
   - name: avg_disk
-    type: FLOAT64
+    type: DOUBLE
     description: 'Average disk usage percentage'
   - name: avg_cpu_usage
-    type: FLOAT64
+    type: DOUBLE
     description: 'Average CPU usage percentage'
   - name: avg_cpu_volt
-    type: FLOAT64
+    type: DOUBLE
     description: 'Average CPU voltage'
   - name: uptime
-    type: INT64
+    type: BIGINT
     description: 'Latest uptime in seconds'
   - name: rx
-    type: INT64
+    type: BIGINT
     description: 'Max receive bytes'
   - name: tx
-    type: INT64
+    type: BIGINT
     description: 'Max transmit bytes'
   - name: ingested_at
     type: TIMESTAMP
@@ -56,7 +56,9 @@ import pandas as pd
 from dotenv import load_dotenv
 load_dotenv()  # loads .env from WorkingDirectory
 
-# pi.taila7b28e.ts.net
+# quack.virdio.my.id — DuckDB served remotely via the quack extension.
+# raw_data is read from here, and the report table is written back here
+# (BigQuery is no longer used as a materialization target).
 def materialize() -> pd.DataFrame:
     host = bruin.get_connection("PI_TAILSCALE_HOST").raw
     token = bruin.get_connection("PI_TAILSCALE_TOKEN").raw
@@ -81,7 +83,7 @@ def materialize() -> pd.DataFrame:
             ROUND(MAX(disk_usage_pct), 2) AS avg_disk,
             ROUND(AVG(cpu_usage_pct), 2) AS avg_cpu_usage,
             ROUND(AVG(cpu_volt_v), 2) AS avg_cpu_volt,
-            CAST(MAX(uptime_seconds) AS INTEGER) AS uptime,
+            CAST(MAX(uptime_seconds) AS BIGINT) AS uptime,
             MAX(rx_bps) AS rx,
             MAX(tx_bps) AS tx,
             CURRENT_TIMESTAMP as ingested_at
@@ -89,6 +91,12 @@ def materialize() -> pd.DataFrame:
         GROUP BY ts
         ORDER BY ts ASC
     """).fetchdf()
+
+    duck_conn.register("staging", df)
+    duck_conn.execute("""
+        CREATE OR REPLACE TABLE remote_db.daily_report AS
+        SELECT * FROM staging
+    """)
 
     duck_conn.execute("DETACH remote_db;")
     duck_conn.close()
