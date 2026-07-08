@@ -56,7 +56,7 @@ import pandas as pd
 from dotenv import load_dotenv
 load_dotenv()  # loads .env from WorkingDirectory
 
-
+# pi.taila7b28e.ts.net
 def materialize() -> pd.DataFrame:
     host = bruin.get_connection("PI_TAILSCALE_HOST").raw
     token = bruin.get_connection("PI_TAILSCALE_TOKEN").raw
@@ -66,8 +66,7 @@ def materialize() -> pd.DataFrame:
     duck_conn.execute("INSTALL quack;")
     duck_conn.execute("LOAD quack;")
     duck_conn.execute(f"""
-        ATTACH 'quack:pi.taila7b28e.ts.net' AS remote_db (
-            DISABLE_SSL true,
+        ATTACH 'quack:quack.virdio.my.id:443' AS remote_db (
             TOKEN '{token}'
         );
     """)
