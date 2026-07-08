@@ -8,3 +8,6 @@ variables:
   token:
     type: string
     default: 'token'
+  quack_token:
+    type: string
+    default: 'token'
